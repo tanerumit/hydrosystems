@@ -14,6 +14,7 @@
 #'
 #' @return the output is a vector of PET values
 #' @export
+#'
 PET_calculate <- function(date, tavg, tdif, lat, method = "hargreaves") {
 
   #Extract years & months from the date object
