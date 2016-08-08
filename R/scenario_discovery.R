@@ -6,7 +6,7 @@
 #' @param y is a vector of response values
 #' @param minimum risk threshold required for the prim boxes
 #' @param vdim is number of dimensions to explore in the input matrix
-
+#' @export
 prim_grid <- function(input, y, threshold = 0, vdim = 3) {
 
   require(prim)
