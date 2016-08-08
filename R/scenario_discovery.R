@@ -9,6 +9,9 @@
 
 prim_grid <- function(input, y, threshold = 0, vdim = 3) {
 
+  require(prim)
+  require(dplyr)
+
   #All combinations of input variables
   var_com <- t(combn(x = 1:ncol(input), vdim))
   num_com <- nrow(var_com)
