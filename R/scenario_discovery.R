@@ -7,7 +7,7 @@
 #' @param minimum risk threshold required for the prim boxes
 #' @param vdim is number of dimensions to explore in the input matrix
 #' @export
-prim_grid <- function(input, y, threshold = 0, vdim = 3) {
+prim_grid <- function(input, y, threshold = 0, vdim = 3, ...) {
 
   require(prim)
   require(dplyr)
@@ -25,8 +25,7 @@ prim_grid <- function(input, y, threshold = 0, vdim = 3) {
     var_names <- paste(colnames(input)[var_com[i,]], collapse = "-")
     x <- input[,var_com[i,]]
 
-    model_prim <- prim.box(x=x, y=y,
-      threshold.type=1, peel.alpha = 0.05, paste.alpha = 0.01)
+    model_prim <- prim.box(x=x, y=y, ...)
 
     #Template to store data
     num <- model_prim$num.hdr.class
@@ -52,9 +51,6 @@ prim_grid <- function(input, y, threshold = 0, vdim = 3) {
     out[[i]] <- df
   }
 
-  #Combine results
-  out %<>% bind_rows(out)
-
   #return output
-  return(out)
+  return(bind_rows(out))
 }
