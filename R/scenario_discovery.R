@@ -23,9 +23,9 @@ prim_grid <- function(input, y, threshold = 0, vdim = 3) {
   for (i in seq_len(num_com)) {
 
     var_names <- paste(colnames(input)[var_com[i,]], collapse = "-")
-    var_x <- input[,var_com[i,]]
+    x <- input[,var_com[i,]]
 
-    model_prim <- prim.box(x=var_x, y=var_y,
+    model_prim <- prim.box(x=x, y=y,
       threshold.type=1, peel.alpha = 0.05, paste.alpha = 0.01)
 
     #Template to store data
