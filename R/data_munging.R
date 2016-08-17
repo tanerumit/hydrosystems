@@ -20,7 +20,7 @@ expand_grid_df <- function(...) {
 #' @param z parameter z
 #' @param resolution placeholder
 #' @export
-#' @importfrom akima interp
+#' @import akima
 grid_interpolate <- function(x, y, z = NULL, resolution = 100, ...) {
   #Interpolation for three-dimensional array
 
