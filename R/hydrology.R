@@ -115,7 +115,7 @@ abcd_qest <- function(parm, P, PE, S_ini , G_ini, print.all = FALSE) {
 abcd_calibrate <- function(..., Q.obs, metric = "KGE", na.rm = FALSE) {
 
   #Estimated streamflow
-  Q.est <- ABCD_QEST(...)
+  Q.est <- abcd_qest(...)
 
   #Exclude missing data from calibration
   if(na.rm == TRUE) {
