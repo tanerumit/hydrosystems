@@ -18,11 +18,11 @@ reservoir_sim(beg.y = 2020, beg.m = 1, K, K_dead, pool_flood = 0,
 
 \item{K_dead, }{top of inactive storage volume [MCM]}
 
-\item{pool_flood}{flood protection pool size [%]}
+\item{pool_flood}{relative size of flood protection pool}
 
-\item{pool_cons}{conservation pool size [%]}
+\item{pool_cons}{relative size of conservation pool}
 
-\item{pool_buff}{buffer pool size [%]}
+\item{pool_buff}{relative size of buffer pool}
 
 \item{buffer}{reservoir storage buffer coefficient [dimless]}
 

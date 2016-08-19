@@ -16,90 +16,102 @@
 #' @export
 PET_calculate <- function(date, tavg, tdif, lat, method = "hargreaves") {
 
-  #Extract years & months from the date object
-  years_num <- length(unique(as.numeric(format(date,"%Y"))))
-  months    <- as.numeric(format(date,"%m"))
+    # Extract years & months from the date object
+    years_num <- length(unique(as.numeric(format(date, "%Y"))))
+    months <- as.numeric(format(date, "%m"))
 
-  lookUp <- data.frame(m = 1:12,
-    days.m = c(31,28,31,30,31,30,31,31,30,31,30,31),
-    days.j = c(15,46,75,106,136,167,197,228,259,289,320,350))
+    lookUp <- data.frame(m = 1:12, days.m = c(31, 28, 31, 30, 31, 30, 31, 31,
+        30, 31, 30, 31), days.j = c(15, 46, 75, 106, 136, 167, 197, 228, 259,
+        289, 320, 350))
 
-  DaysInMonth <- lookUp$days.m[months]
-  JulianDay <- lookUp$days.j[months]
+    DaysInMonth <- lookUp$days.m[months]
+    JulianDay <- lookUp$days.j[months]
 
-  if(method == "hargreaves") {
+    if (method == "hargreaves") {
 
-    dr = (1+0.033*cos(2*pi/365*JulianDay))
-    phi = pi/180*lat
-    delta = 0.409*sin((2*pi/365*JulianDay)-1.39)
-    ws = acos(-tan(phi)*tan(delta))
-    Rs = ((24*60/pi)*0.082*dr*(ws*sin(phi)*sin(delta) +
-        cos(phi)*cos(delta)*sin(ws)))*0.408*DaysInMonth
-    PET = 0.0023*Rs*(tavg + 17.8)*sqrt(tdif)
+        dr = (1 + 0.033 * cos(2 * pi/365 * JulianDay))
+        phi = pi/180 * lat
+        delta = 0.409 * sin((2 * pi/365 * JulianDay) - 1.39)
+        ws = acos(-tan(phi) * tan(delta))
+        Rs = ((24 * 60/pi) * 0.082 * dr * (ws * sin(phi) * sin(delta) + cos(phi) *
+            cos(delta) * sin(ws))) * 0.408 * DaysInMonth
+        PET = 0.0023 * Rs * (tavg + 17.8) * sqrt(tdif)
 
-  }
+    }
 }
 
-
-#' Simulate streamflow using 'ABCD' Hydrology model (no snow)
+#'  Run-off simulation model
 #'
 #' \code{abcd_qest()} returns monthly or daily streamflow time-series
+#'  The ABCD water balance model is a simple hydrologic model for simulating
+#'  streamflow in response to precipitation and potential evapotranspiration
+#'  developed by Thomas (1981). The model is comprised of two storage
+#'  compartmens: soil moisture and groundwater. The soil moisture gains water
+#'  from precipitation and loses water to evapotranspiration (ET), surface
+#'  runoff and groundwater recharge. The groundwater compartment gains water
+#'  from recharge and loses water as discharge. The total streamflow is the sum
+#'  of surface runoff from the soil moisture and groundwater discharge.
+#'  The model has four parameters: a, b, c, a, d.
+#' \itemize{
+#' \item a ranges between 0 and 1.
+#' \item b ranges between 260 - 1900 (Vandewiele et al. 1992).
+#' \item c ranges between 0 - 1.
+#' \item d ranges between 0 - 1.
+#' }
 #' @param parm abcd model parameters
 #' @param P a vector of precipitation time-series (mm)
 #' @param PE a vector of potential evaporation time-series (mm)
 #' @param S_ini is the initial soil moisture (mm)
 #' @param G_ini is the initial groundwater storage (mm)
-#' @return the output is a vector of PET values
+#' @return the output is a time-series of run-off values
 #' @export
-abcd_qest <- function(parm, P, PE, S_ini , G_ini, print.all = FALSE) {
+abcd_qest <- function(parm, P, PE, S_ini, G_ini, print.all = FALSE) {
 
-  #parameters = a vector with a,b,c,d
-  #P	= a vector with precip time series for current station
-  #PE	= a vector with potential ET time series for current station
-  #T	= a vector with tavg time series for current statio
-  #Qobs	= a vector with observed streamflow time series for current station
-  #Sint = initial soil moisture
-  #Gint = initial groundwater storage
-  #Aint = initial snow accumulation
+    # parameters = a vector with a,b,c,d P = a vector with precip time series for
+    # current station PE = a vector with potential ET time series for current
+    # station T = a vector with tavg time series for current statio Qobs = a
+    # vector with observed streamflow time series for current station Sint =
+    # initial soil moisture Gint = initial groundwater storage Aint = initial snow
+    # accumulation
 
-  #MODEL PARAMETERS
-  #a = runoff & recharge (when soil is under-saturated)    [0-1]
-  #b = saturation level                                    [?14 - ?1900]
-  #c = ratio of groundwater recharge to surface runoff     [0-1]
-  #d = the rate of groundwater discharge                   [0-1]
+    # MODEL PARAMETERS a = runoff & recharge (when soil is under-saturated) [0-1]
+    # b = saturation level [?14 - ?1900] c = ratio of groundwater recharge to
+    # surface runoff [0-1] d = the rate of groundwater discharge [0-1]
 
-  #Calibration period length
-  final <- length(PE)
+    # Calibration period length
+    final <- length(PE)
 
-  W <- array(0,final)   	 #available water
-  Y <- array(0,final)   	 #evapotranspiration opportunity
-  S <- array(0,final)  	   #soil moisture
-  E <- array(0,final)      #actual evaporation
-  G <- array(0,final)  	   #groundwater storage
-  Qest <- array(0,final)   #estimated surface runoff
+    W <- array(0, final)  #available water
+    Y <- array(0, final)  #evapotranspiration opportunity
+    S <- array(0, final)  #soil moisture
+    E <- array(0, final)  #actual evaporation
+    G <- array(0, final)  #groundwater storage
+    Qest <- array(0, final)  #estimated surface runoff
 
-  for (i in 1:final) {
+    for (i in 1:final) {
 
-    W[i] <- ifelse(i == 1, P[i] + S_ini, P[i] + S[i-1])
+        W[i] <- ifelse(i == 1, P[i] + S_ini, P[i] + S[i - 1])
 
-    #w1 and w2 are intermediate values used to calculate Y
-    w1 <- (W[i]+parm[2])/(2*parm[1])
-    w2 <- W[i]*parm[2]/parm[1]
+        # w1 and w2 are intermediate values used to calculate Y
+        w1 <- (W[i] + parm[2])/(2 * parm[1])
+        w2 <- W[i] * parm[2]/parm[1]
 
-    Y[i] <- w1 - sqrt((w1^2)-w2)
-    S[i] <- Y[i]*exp(-1*PE[i]/parm[2])
-    E[i] <- Y[i]*(1-exp(-1*(PE[i]/parm[2])))
+        Y[i] <- w1 - sqrt((w1^2) - w2)
+        S[i] <- Y[i] * exp(-1 * PE[i]/parm[2])
+        E[i] <- Y[i] * (1 - exp(-1 * (PE[i]/parm[2])))
 
-    G[i] <- ifelse(i == 1,
-      (G_ini + parm[3]*round((W[i]-Y[i]),2))/(1+parm[4]),
-      (G[i-1] + parm[3]*round((W[i]-Y[i]),2))/(1+parm[4]))
+        G[i] <- ifelse(i == 1, (G_ini + parm[3] * round((W[i] - Y[i]), 2))/(1 +
+            parm[4]), (G[i - 1] + parm[3] * round((W[i] - Y[i]), 2))/(1 + parm[4]))
 
-    Qest[i] <- (1-parm[3])*round((W[i]-Y[i]),2)+parm[4]*G[i]
+        Qest[i] <- (1 - parm[3]) * round((W[i] - Y[i]), 2) + parm[4] * G[i]
 
-  }
+    }
 
-  if(print.all == FALSE) {
-    return(Qest) } else {return(list(Qest, S = S, G = G))}
+    if (print.all == FALSE) {
+        return(Qest)
+    } else {
+        return(list(Qest, S = S, G = G))
+    }
 }
 
 ################################################################################
@@ -114,39 +126,41 @@ abcd_qest <- function(parm, P, PE, S_ini , G_ini, print.all = FALSE) {
 #' @export
 abcd_calibrate <- function(..., Q.obs, metric = "KGE", na.rm = FALSE) {
 
-  #Estimated streamflow
-  Q.est <- abcd_qest(...)
+    # Estimated streamflow
+    Q.est <- abcd_qest(...)
 
-  #Exclude missing data from calibration
-  if(na.rm == TRUE) {
-    if(any(is.na(Q.obs))) {
-      indNA <-  which(is.na(Q.obs))
-      Q.obs <- Q.obs[-indNA]
-      Q.est <- Q.est[-indNA]}
-  }
+    # Exclude missing data from calibration
+    if (na.rm == TRUE) {
+        if (any(is.na(Q.obs))) {
+            indNA <- which(is.na(Q.obs))
+            Q.obs <- Q.obs[-indNA]
+            Q.est <- Q.est[-indNA]
+        }
+    }
 
-  #ROOT MEAN SQUARE ERROR (RMSE)
-  if(metric == "RMSE") {
-    Val <- sqrt(mean((Q.obs - Q.est)^2))}
+    # ROOT MEAN SQUARE ERROR (RMSE)
+    if (metric == "RMSE") {
+        Val <- sqrt(mean((Q.obs - Q.est)^2))
+    }
 
 
-  #KLING-GUPTA EFFICIENCY (KGE)
-  if(metric == "KGE") {
-    cc    <- cor(Q.obs, Q.est)
-    beta  <- mean(Q.est)/mean(Q.obs)
-    alpha <- sd(Q.est)/sd(Q.obs)
-    Val   <- 1 - (1 - sqrt((cc-1)^2 + (alpha-1)^2 + (beta-1)^2))
-  }
+    # KLING-GUPTA EFFICIENCY (KGE)
+    if (metric == "KGE") {
+        cc <- cor(Q.obs, Q.est)
+        beta <- mean(Q.est)/mean(Q.obs)
+        alpha <- sd(Q.est)/sd(Q.obs)
+        Val <- 1 - (1 - sqrt((cc - 1)^2 + (alpha - 1)^2 + (beta - 1)^2))
+    }
 
-  #NASH SUTCLIFFE EFFICIENCY (NSE)
-  if(metric == "NSE") {
-    #Nash-Sutcliffe efficiency
-    NS1 <- mapply(function(x,y) (x-y)^2, Q.obs, Q.est)
-    NS2 <- mapply(function(x,y) (x-y)^2, Q.obs, mean(Q.obs))
-    Val <- sum(NS1)/sum(NS2)
-  }
+    # NASH SUTCLIFFE EFFICIENCY (NSE)
+    if (metric == "NSE") {
+        # Nash-Sutcliffe efficiency
+        NS1 <- mapply(function(x, y) (x - y)^2, Q.obs, Q.est)
+        NS2 <- mapply(function(x, y) (x - y)^2, Q.obs, mean(Q.obs))
+        Val <- sum(NS1)/sum(NS2)
+    }
 
-  return(Val)
+    return(Val)
 
 }
 

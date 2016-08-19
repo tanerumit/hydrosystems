@@ -6,9 +6,9 @@
 #' @param  beg.m      First month of the simulation period [dimless]
 #' @param  K,         Reservoir design storage capacity [MCM]
 #' @param  K_dead,    top of inactive storage volume [MCM]
-#' @param  pool_flood flood protection pool size [%]
-#' @param  pool_cons  conservation pool size [%]
-#' @param  pool_buff  buffer pool size [%]
+#' @param  pool_flood relative size of flood protection pool
+#' @param  pool_cons  relative size of conservation pool
+#' @param  pool_buff  relative size of buffer pool
 #' @param  buffer     reservoir storage buffer coefficient [dimless]
 #' @param  Q,         Monthly inflows to reservoir [MCM/month]
 #' @param  T_dom,     Domestic target release [MCM]
@@ -150,3 +150,8 @@ reservoir_sim <- function(
 
   return(df)
 }
+
+
+
+
+
