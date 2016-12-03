@@ -1,46 +1,80 @@
-#' Potential evapotranspiration (PET)
+
+#' Potential evapotranspiration (PET) by hargreaves method
 #'
-#' \code{PET_calculate()} returns monthly or daily PET values with the desired
-#' calculation approach based on the input arguments
-#' \url{https://en.wikipedia.org/wiki/Evapotranspiration}
+#' \url{http://www.civil.uwaterloo.ca/watflood/manual/02_03_2.htm}
 #'
 #' @param date a time-series date object
 #' @param tavg a vector of average temperature values (°C)
 #' @param tdif a vector of differences computed from maximum and minimum
 #' temperatures
-#' @param lat latitude information (enter negative values for southern hemisphere)
-#' @param method PET calculation method (currently only hargreaves formula is
-#' used)
-#'
+#' @param lat latitude information (negative values for southern hemisphere)
+
 #' @return the output is a vector of PET values
 #' @export
-PET_calculate <- function(date, tavg, tdif, lat, method = "hargreaves") {
+PET_hargreaves <- function(date, tavg, tdif, lat) {
+  
+  # Extract years & months from the date object
+  years_num <- length(unique(as.numeric(format(date, "%Y"))))
+  months <- as.numeric(format(date, "%m"))
+  
+  lookUp <- data.frame(m = 1:12, 
+    days.m = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), 
+    days.j = c(15, 46, 75, 106, 136, 167, 197, 228, 259,
+      289, 320, 350))
+  
+  DaysInMonth <- lookUp$days.m[months]
+  JulianDay <- lookUp$days.j[months]
+  
+  dr = (1 + 0.033 * cos(2 * pi/365 * JulianDay))
+  phi = pi/180 * lat
+  delta = 0.409 * sin((2 * pi/365 * JulianDay) - 1.39)
+  ws = acos(-tan(phi) * tan(delta))
+  Rs = ((24 * 60/pi) * 0.082 * dr * (ws * sin(phi) * sin(delta) + cos(phi) *
+      cos(delta) * sin(ws))) * 0.408 * DaysInMonth
+  PET = 0.0023 * Rs * (tavg + 17.8) * sqrt(tdif)
 
-    # Extract years & months from the date object
-    years_num <- length(unique(as.numeric(format(date, "%Y"))))
-    months <- as.numeric(format(date, "%m"))
-
-    lookUp <- data.frame(m = 1:12, days.m = c(31, 28, 31, 30, 31, 30, 31, 31,
-        30, 31, 30, 31), days.j = c(15, 46, 75, 106, 136, 167, 197, 228, 259,
-        289, 320, 350))
-
-    DaysInMonth <- lookUp$days.m[months]
-    JulianDay <- lookUp$days.j[months]
-
-    if (method == "hargreaves") {
-
-        dr = (1 + 0.033 * cos(2 * pi/365 * JulianDay))
-        phi = pi/180 * lat
-        delta = 0.409 * sin((2 * pi/365 * JulianDay) - 1.39)
-        ws = acos(-tan(phi) * tan(delta))
-        Rs = ((24 * 60/pi) * 0.082 * dr * (ws * sin(phi) * sin(delta) + cos(phi) *
-            cos(delta) * sin(ws))) * 0.408 * DaysInMonth
-        PET = 0.0023 * Rs * (tavg + 17.8) * sqrt(tdif)
-
-    }
+  return(PET)
 }
 
-#'  Run-off simulation model
+#-------------------------------------------------------------------------------
+
+#' ' Potential evapotranspiration (PET) by hamon method
+
+#' \url{http://data.snap.uaf.edu/data/Base/AK_2km/PET/Hamon_PET_equations.pdf}
+#'
+#' @param date a time-series date object
+#' @param tavg average monthly temperature (DegC)
+#' @param Ld length of day as multiple of 12 hours (for hamon equation)
+#' @param KPEC calibration parameter (for hamon equation)
+#' 
+#' @return returns monthly PET values (mm/month)
+#' @export
+PET_hamon <- function(date, tavg, Ld, KPEC) {
+  
+  # Extract years & months from the date object
+  months <- as.numeric(format(date, "%m"))
+  lookUp <- data.frame(m = 1:12, 
+    days.m = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), 
+    days.j = c(15, 46, 75, 106, 136, 167, 197, 228, 259, 289, 320, 350))
+  
+  DaysInMonth <- lookUp$days.m[months]
+  
+  #Saturated vapor  pressure (mb) at the given Temp. (Deg C)
+  ESAT <- 6.108 * exp(17.26939 * tavg / (tavg + 273.3))
+  
+  #Saturated vapor density (g/m3) at the daily mean air temparture (T)
+  RHOSAT <- 216.7 * ESAT / (tavg + 273.3)
+  
+  #Daily PET (mm/day)
+  PET_daily <- 0.1651 * Ld * RHOSAT * KPEC
+  PET <- PET_daily * DaysInMonth
+
+  return(PET)
+}
+
+#-------------------------------------------------------------------------------
+
+#'  ABCD conceptual rainfall - runoff simulation model
 #'
 #' \code{abcd_qest()} returns monthly or daily streamflow time-series
 #'  The ABCD water balance model is a simple hydrologic model for simulating
@@ -114,7 +148,7 @@ abcd_qest <- function(parm, P, PE, S_ini, G_ini, print.all = FALSE) {
     }
 }
 
-################################################################################
+#-------------------------------------------------------------------------------
 
 #' Calibrate 'abcd' hydrology model
 #'
@@ -164,3 +198,4 @@ abcd_calibrate <- function(..., Q.obs, metric = "KGE", na.rm = FALSE) {
 
 }
 
+#-------------------------------------------------------------------------------

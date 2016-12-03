@@ -135,9 +135,6 @@ reservoir_sim <- function(
     Spl[i] <- max(S[i] - K, 0)
     if(Spl[i] != 0) {S[i] <- S[i] - Spl[i]}
 
-    # Increment the progress bar, and update the detail text.
-    #incProgress(1/length(Date))
-
   }
 
   #Save results to data_frame

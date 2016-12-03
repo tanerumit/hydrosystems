@@ -2,7 +2,7 @@
 % Please edit documentation in R/hydrology.r
 \name{abcd_qest}
 \alias{abcd_qest}
-\title{Run-off simulation model}
+\title{ABCD conceptual rainfall - runoff simulation model}
 \usage{
 abcd_qest(parm, P, PE, S_ini, G_ini, print.all = FALSE)
 }

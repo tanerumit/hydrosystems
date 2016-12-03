@@ -4,10 +4,8 @@
 #' @param col a vector of colors
 #' @param alpha desired alpha level
 #'
-#' @return
+#' @return returns values
 #' @export
-#'
-#' @examples
 brewer_alpha <- function(col, alpha=1){
   if(missing(col))
     stop("Please provide a vector of colours.")
@@ -15,15 +13,12 @@ brewer_alpha <- function(col, alpha=1){
     function(x) rgb(x[1], x[2], x[3], alpha=alpha)))
 }
 
-
 #' Equation Display function for ggplot2
 #'
-#' @param df 
+#' @param df data frame to pass
 #'
-#' @return
+#' @return returns values
 #' @export
-#'
-#' @examples
 lm_eqn = function(df) {
   
   #Equation Display function on the plot
@@ -34,6 +29,3 @@ lm_eqn = function(df) {
       r2 = format(summary(m)$r.squared, digits = 3)))
   as.character(as.expression(eq))
 }
-
-
-
