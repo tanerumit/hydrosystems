@@ -1,20 +1,20 @@
 
 #' Create a tibble from All Combinations of Factor Variables
 #'
-#' @param ... placeholder
+#' @param ... vectors to be passed to the function
 #' @export
 #' @import dplyr
-expand_grid <- function(...) {expand.grid(...)  %>% as_data_frame()} 
-  
+expandGrid <- function(...) {expand.grid(...)  %>% as_data_frame()}
+
 
 #-------------------------------------------------------------------------------
 #
 #' Create a tibble from the Combinations of data frames
 #'
-#' @param ... placeholder
+#' @param ... data frames to be passed to the function
 #' @export
 #' @import dplyr
-expand_grid_df <- function(...) {
+expandGridDf <- function(...) {
   Reduce(function(...) merge(..., by = NULL), list(...)) %>% as_data_frame()
 }
 
@@ -22,20 +22,20 @@ expand_grid_df <- function(...) {
 
 #' Interpolation from 2-D matrix
 #'
-#' @param x parameter x
-#' @param y parameter y
-#' @param z parameter z
-#' @param resolution placeholder
+#' @param x parameter on x-axis
+#' @param y parameter on y-axis
+#' @param z parameter on z-axis
+#' @param resolution resolution used for interpolating z
 #' @export
-grid_interpolate <- function(x, y, z = NULL, resolution = 100, ...) {
-    
+gridInterpolate <- function(x, y, z = NULL, resolution = 100, ...) {
+
   # Interpolation for three-dimensional array
   if (is.null(z)) {z <- rep(0, length(x))}
 
   z <- data.frame(z)
 
-  df1 <- lapply(seq_len(ncol(z)), function(i) akima::interp(x, y, z[, i], 
-      xo = seq(min(x), max(x), length = resolution), 
+  df1 <- lapply(seq_len(ncol(z)), function(i) akima::interp(x, y, z[, i],
+      xo = seq(min(x), max(x), length = resolution),
       yo = seq(min(y), max(y), length = resolution)), ...)
 
     df2 <- do.call("cbind", lapply(df1, function(x) c(x$z)))
@@ -50,7 +50,7 @@ grid_interpolate <- function(x, y, z = NULL, resolution = 100, ...) {
 #' @param what placeholder
 #' @param by placeholder
 #' @export
-multiple_replace <- function(x, what, by) {
+multiReplace <- function(x, what, by) {
     stopifnot(length(what) == length(by))
     ind <- match(x, what)
     ifelse(is.na(ind), x, by[ind])
@@ -63,7 +63,7 @@ multiple_replace <- function(x, what, by) {
 #' @param new_names placeholder
 #' @export
 #'
-rename_columns <- function(data_list, new_names) {
+renameColumns <- function(data_list, new_names) {
 
     lapply(seq(data_list), function(x) {
         y <- data.frame(LCE_metrics[[x]])
@@ -79,7 +79,7 @@ rename_columns <- function(data_list, new_names) {
 #' @param x placeholder
 #' @export
 #'
-bin_centered <- function(x) {
+binCentered <- function(x) {
     return(x[-length(x)] + (x[2] - x[1])/2)
 }
 

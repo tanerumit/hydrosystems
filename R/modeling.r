@@ -1,10 +1,11 @@
+
 #' Calculate goodness of fit parameters
 #'
 #' @param observed observed results
 #' @param simulated simulation results
 #' @param output measure to be calculated: NSE, KGE, RMSE or bias
 #' @export
-GoodnessOfFit <- function(observed, simulated, output = "NSE") {
+goodnessOfFit <- function(observed, simulated, output = "NSE") {
 
   #Nash-Sutcliffe efficiency (NSE)
   NS1 <- mapply(function(x,y) (x-y)^2, observed, simulated)
@@ -49,11 +50,64 @@ GoodnessOfFit <- function(observed, simulated, output = "NSE") {
 #' @return RETURN_DESCRIPTION
 #' @examples
 #' # ADD_EXAMPLES_HERE
-piecewise_lm <- function(var_name, knots) {
+piecewiseLm <- function(var_name, knots) {
   formula.sign <- rep(" - ", length(knots))
   formula.sign[knots < 0] <- " + "
   paste(var.name, "+",
     paste("I(pmax(", var_name, formula.sign, abs(knots), ", 0))",
       collapse = " + ", sep=""))
 }
+
+
+#' K nearest neighbors (KNN) bootrapping
+#'
+#' \code{knn()} returns a sample based on knn scheme
+#' @param x is the prior value selected
+#' @param k is the number of nearest points
+#' @param s is the vector to sample from
+#' @export
+kNearestNeigboors <- function(x, k, s) {
+  
+  x.dis <- sqrt((s - x)^2)
+  s.ind <- which(x.dis %in% sort(x.dis)[1:k])
+  s.wgh <- sapply(1:k, function(y) (1/y)/(sum(1/(1:k))))
+  x.new <- sample(s[s.ind], size = 1, replace = TRUE, prob = s.wgh)
+  x.new.ind <- which(x.new == s)
+  
+  return(x.new.ind)
+}
+
+#' Inverse Box-cox transformation
+#'
+#' \code{boxcox_inverse()} returns a sample based on knn scheme
+#' @param lamda value extracted from power transform
+#' @param Y box-cox transformation value
+#' @export
+boxcoxTranformInverse <- function(lambda, Y) {
+  
+  if (lambda == 0) {
+    result <- exp(Y)
+  }
+  if (lambda != 0) {
+    result <- (lambda * Y + 1)^(1/lambda)
+  }
+  return(result)
+  
+}
+
+
+#' Function to extract the overall ANOVA p-value out of a linear model object
+#'
+#' \code{extract_pval()} returns a sample based on knn scheme
+#' @param modelobject is the model to extract p values from
+#' @export
+extractPvalue <- function(modelobject) {
+  if (class(modelobject) != "lm") 
+    stop("Not an object of class 'lm' ")
+  f <- summary(modelobject)$fstatistic
+  p <- pf(f[1], f[2], f[3], lower.tail = F)
+  attributes(p) <- NULL
+  return(p)
+}
+
 

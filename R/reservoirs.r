@@ -2,27 +2,27 @@
 #'
 #' \code{reservoir_sim()} returns simulation results from a reservoir analysis
 #'
-#' @param  beg.y      First year of the simulation period [dimless]
-#' @param  beg.m      First month of the simulation period [dimless]
-#' @param  K,         Reservoir design storage capacity [MCM]
-#' @param  K_dead,    top of inactive storage volume [MCM]
-#' @param  pool_flood relative size of flood protection pool
-#' @param  pool_cons  relative size of conservation pool
-#' @param  pool_buff  relative size of buffer pool
-#' @param  buffer     reservoir storage buffer coefficient [dimless]
-#' @param  Q,         Monthly inflows to reservoir [MCM/month]
-#' @param  T_dom,     Domestic target release [MCM]
-#' @param  T_irr,     Irrigation target release [MCM]
-#' @param  T_eco,     Environmental target release [MCM]
-#' @param  evap.m     per area evaporation from reservoir [MCM/month]
-#' @param  f_elev     evalation as f(volume) [approxfun obj]
-#' @param  f_vol      volume as f(elevation) [approxfun obj]
-#' @param  f_sarea    s.area as f(volume) [approxfun obj]
-#' @param  S_fr       initial fill ratio at the first month [dimless]
-#' @param  cycle      time-series double cycling [T/F]
-#' @param  C_alloc    allocation coefficient [dimless]
+#' @param  beg.y        First year of the simulation period [dimless]
+#' @param  beg.m        First month of the simulation period [dimless]
+#' @param  K,           Reservoir design storage capacity [MCM]
+#' @param  K_dead,      top of inactive storage volume [MCM]
+#' @param  pool_flood   relative size of flood protection pool
+#' @param  pool_cons    relative size of conservation pool
+#' @param  pool_buff    relative size of buffer pool
+#' @param  buffer       reservoir storage buffer coefficient [dimless]
+#' @param  Q,           Monthly inflows to reservoir [MCM/month]
+#' @param  T_dom,       Domestic target release [MCM]
+#' @param  T_irr,       Irrigation target release [MCM]
+#' @param  T_eco,       Environmental target release [MCM]
+#' @param  evap.m       per area evaporation from reservoir [MCM/month]
+#' @param  f_elev       evalation as f(volume) [approxfun obj]
+#' @param  f_vol        volume as f(elevation) [approxfun obj]
+#' @param  f_sarea      s.area as f(volume) [approxfun obj]
+#' @param  S_fr         initial fill ratio at the first month [dimless]
+#' @param  cycle        time-series double cycling [T/F]
+#' @param  C_alloc      allocation coefficient [dimless]
 #' @export
-reservoir_sim <- function(
+reservoirSimulation <- function(
   beg.y = 2020, beg.m = 1, K, K_dead, pool_flood = 0, pool_cons  = 0.7,
   pool_buff  = 0.3, buffer = 1, Q, T_dom, T_irr, T_eco, evap.m,
   f_elev, f_vol, f_sarea, S_fr = 0.8, cycle = FALSE,  C_alloc = 0.8,

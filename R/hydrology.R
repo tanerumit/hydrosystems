@@ -11,7 +11,7 @@
 
 #' @return the output is a vector of PET values
 #' @export
-PET_hargreaves <- function(date, tavg, tdif, lat) {
+hargreavesPET <- function(date, tavg, tdif, lat) {
   
   # Extract years & months from the date object
   years_num <- length(unique(as.numeric(format(date, "%Y"))))
@@ -36,9 +36,8 @@ PET_hargreaves <- function(date, tavg, tdif, lat) {
   return(PET)
 }
 
-#-------------------------------------------------------------------------------
 
-#' ' Potential evapotranspiration (PET) by hamon method
+#' Potential evapotranspiration (PET) by hamon method
 
 #' \url{http://data.snap.uaf.edu/data/Base/AK_2km/PET/Hamon_PET_equations.pdf}
 #'
@@ -49,15 +48,7 @@ PET_hargreaves <- function(date, tavg, tdif, lat) {
 #' 
 #' @return returns monthly PET values (mm/month)
 #' @export
-PET_hamon <- function(date, tavg, Ld, KPEC) {
-  
-  # Extract years & months from the date object
-  months <- as.numeric(format(date, "%m"))
-  lookUp <- data.frame(m = 1:12, 
-    days.m = c(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31), 
-    days.j = c(15, 46, 75, 106, 136, 167, 197, 228, 259, 289, 320, 350))
-  
-  DaysInMonth <- lookUp$days.m[months]
+hamonPET <- function(tavg, Ld, KPEC) {
   
   #Saturated vapor  pressure (mb) at the given Temp. (Deg C)
   ESAT <- 6.108 * exp(17.26939 * tavg / (tavg + 273.3))
@@ -67,12 +58,10 @@ PET_hamon <- function(date, tavg, Ld, KPEC) {
   
   #Daily PET (mm/day)
   PET_daily <- 0.1651 * Ld * RHOSAT * KPEC
-  PET <- PET_daily * DaysInMonth
 
-  return(PET)
+  return(PET_daily)
 }
 
-#-------------------------------------------------------------------------------
 
 #'  ABCD conceptual rainfall - runoff simulation model
 #'
@@ -92,14 +81,14 @@ PET_hamon <- function(date, tavg, Ld, KPEC) {
 #' \item c ranges between 0 - 1.
 #' \item d ranges between 0 - 1.
 #' }
-#' @param parm abcd model parameters
-#' @param P a vector of precipitation time-series (mm)
-#' @param PE a vector of potential evaporation time-series (mm)
+#' @param parm  abcd model parameters
+#' @param P     a vector of precipitation time-series (mm)
+#' @param PE    a vector of potential evaporation time-series (mm)
 #' @param S_ini is the initial soil moisture (mm)
 #' @param G_ini is the initial groundwater storage (mm)
-#' @return the output is a time-series of run-off values
+#' @return      the output is a time-series of run-off values
 #' @export
-abcd_qest <- function(parm, P, PE, S_ini, G_ini, print.all = FALSE) {
+abcdQest <- function(parm, P, PE, S_ini, G_ini, print.all = FALSE) {
 
     # parameters = a vector with a,b,c,d P = a vector with precip time series for
     # current station PE = a vector with potential ET time series for current
@@ -148,17 +137,16 @@ abcd_qest <- function(parm, P, PE, S_ini, G_ini, print.all = FALSE) {
     }
 }
 
-#-------------------------------------------------------------------------------
 
 #' Calibrate 'abcd' hydrology model
 #'
 #' \code{abcd_calibrate()} returns calibration performance measures for abcd model
-#' @param ... parameters to be passed to abcd_qest()
-#' @param metric performance metric, either 'KGE', 'RMSE' or 'NSE'
-#' @param na.rm logical parameter to remove NA values
-#' @return the performance measure of the abcd model
+#' @param ...     parameters to be passed to abcd_qest()
+#' @param metric  performance metric, either 'KGE', 'RMSE' or 'NSE'
+#' @param na.rm   logical parameter to remove NA values
+#' @return        the performance measure of the abcd model
 #' @export
-abcd_calibrate <- function(..., Q.obs, metric = "KGE", na.rm = FALSE) {
+abcdCalibrate <- function(..., Q.obs, metric = "KGE", na.rm = FALSE) {
 
     # Estimated streamflow
     Q.est <- abcd_qest(...)
