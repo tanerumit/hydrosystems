@@ -6,7 +6,7 @@
 #'
 #' @return returns values
 #' @export
-brewer_alpha <- function(col, alpha=1){
+colorBrewerAlpha <- function(col, alpha=1){
   if(missing(col))
     stop("Please provide a vector of colours.")
   as.vector(apply(sapply(col, col2rgb)/255, 2,
@@ -19,7 +19,7 @@ brewer_alpha <- function(col, alpha=1){
 #'
 #' @return returns values
 #' @export
-lm_eqn = function(df) {
+displayLmEquation = function(df) {
   
   #Equation Display function on the plot
   m = lm(V2~V1, data=df)

@@ -9,7 +9,7 @@
 #' @param vdim placeholder
 #' @param ... placeholder
 #' @export
-prim_grid <- function(input, y, probs, threshold = 0, vdim = 2, ...) {
+primGrid <- function(input, y, probs, threshold = 0, vdim = 2, ...) {
 
   # All combinations of input variables
   var_com <- t(combn(x = 1:ncol(input), vdim))
@@ -84,7 +84,7 @@ prim_grid <- function(input, y, probs, threshold = 0, vdim = 2, ...) {
 #' @param var placeholder
 #' @param box placeholder
 #' @export
-prim_select <- function(input, y, probs, var, box, ...) {
+primSelect <- function(input, y, probs, var, box, ...) {
 
   # List to store the results
   out <- list()
