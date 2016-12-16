@@ -38,7 +38,7 @@ hargreavesPET <- function(date, tavg, tdif, lat) {
 
 
 #' Potential evapotranspiration (PET) by hamon method
-
+#'
 #' \url{http://data.snap.uaf.edu/data/Base/AK_2km/PET/Hamon_PET_equations.pdf}
 #'
 #' @param date a time-series date object

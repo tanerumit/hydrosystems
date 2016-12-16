@@ -83,7 +83,7 @@ kNearestNeigboors <- function(x, k, s) {
 #' @param lamda value extracted from power transform
 #' @param Y box-cox transformation value
 #' @export
-boxcoxTranformInverse <- function(lambda, Y) {
+boxcoxInverse <- function(lambda, Y) {
   
   if (lambda == 0) {
     result <- exp(Y)

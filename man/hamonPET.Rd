@@ -2,8 +2,7 @@
 % Please edit documentation in R/hydrology.R
 \name{hamonPET}
 \alias{hamonPET}
-\title{Potential evapotranspiration (PET) by hamon method
-\url{http://data.snap.uaf.edu/data/Base/AK_2km/PET/Hamon_PET_equations.pdf}}
+\title{Potential evapotranspiration (PET) by hamon method}
 \usage{
 hamonPET(tavg, Ld, KPEC)
 }
@@ -20,7 +19,6 @@ hamonPET(tavg, Ld, KPEC)
 returns monthly PET values (mm/month)
 }
 \description{
-Potential evapotranspiration (PET) by hamon method
 \url{http://data.snap.uaf.edu/data/Base/AK_2km/PET/Hamon_PET_equations.pdf}
 }
 
