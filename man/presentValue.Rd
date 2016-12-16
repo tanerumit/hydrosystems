@@ -9,10 +9,14 @@ presentValue(data, r = 0.05)
 \arguments{
 \item{data}{annual stream of benefits or costs}
 
+<<<<<<< HEAD
 \item{r}{discount rate}
 }
 \value{
 returns prevesent value
+=======
+\item{r}{discount rate (%)}
+>>>>>>> b6090b6fc85e7c32fcf7dbf0d43a3caf405ea09c
 }
 \description{
 Calculate the PV from annual cash flows

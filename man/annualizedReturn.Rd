@@ -9,10 +9,14 @@ annualizedReturn(data, r = 0.05)
 \arguments{
 \item{data}{present value term}
 
+<<<<<<< HEAD
 \item{r}{discount rate}
 }
 \value{
 annualized return of investment
+=======
+\item{r}{discount rate (%)}
+>>>>>>> b6090b6fc85e7c32fcf7dbf0d43a3caf405ea09c
 }
 \description{
 Annualized costs from present value
