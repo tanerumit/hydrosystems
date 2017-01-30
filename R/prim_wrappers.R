@@ -1,7 +1,7 @@
 
 #' Generate a grid output of prim_boxes
 #'
-#' \code{prim_grid()} returns a data table of prim_boxes with given features of
+#' \code{primGrid()} returns results for many prim_boxes with given features of
 #' mass, density, coverage, and weighted coverage
 #' @param input a matrix of input parameter values
 #' @param y is a vector of response values
@@ -76,8 +76,7 @@ primGrid <- function(input, y, probs, threshold = 0, vdim = 2, ...) {
 
 #' prim_select
 #'
-#' \code{prim_grid()} returns a data table of prim_boxes with given features of
-#' mass, density, coverage, and weighted coverage
+#' \code{primSelect()} returns PRIM results with weighted density and coverage
 #' @param input a matrix of input parameter values
 #' @param y is a vector of response values
 #' @param probs placeholder

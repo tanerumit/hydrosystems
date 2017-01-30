@@ -18,7 +18,7 @@ primGrid(input, y, probs, threshold = 0, vdim = 2, ...)
 \item{...}{placeholder}
 }
 \description{
-\code{prim_grid()} returns a data table of prim_boxes with given features of
+\code{primGrid()} returns results for many prim_boxes with given features of
 mass, density, coverage, and weighted coverage
 }
 

@@ -18,7 +18,6 @@ primSelect(input, y, probs, var, box, ...)
 \item{box}{placeholder}
 }
 \description{
-\code{prim_grid()} returns a data table of prim_boxes with given features of
-mass, density, coverage, and weighted coverage
+\code{primSelect()} returns PRIM results with weighted density and coverage
 }
 
