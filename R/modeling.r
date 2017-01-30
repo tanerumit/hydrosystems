@@ -33,9 +33,8 @@ goodnessOfFit <- function(observed, simulated, output = "NSE") {
 #' Piecewise linear regression
 #'
 #' Estimating continuous piecewise linear regression
-#'\url{https://www.r-bloggers.com/estimating-continuous-piecewise-linear-regression/}  
-#'
-# 'Assume you are given continuous predictor x and continuous predicted variable y. 
+#'\url{https://www.r-bloggers.com/estimating-continuous-piecewise-linear-regression/} #'
+#' Assume you are given continuous predictor x and continuous predicted variable y. 
 #' We want to estimate continuous piecewise linear regression with fixed knots stored 
 #' in variable knots using standard lm procedure.
 #' The key to a solution is proper definition of regression formula. In order to introduce #' possibility of change of slope in knot k we have to add a so called hinge term to the 
@@ -95,8 +94,7 @@ boxcoxInverse <- function(lambda, Y) {
   
 }
 
-
-#' Function to extract the overall ANOVA p-value out of a linear model object
+#' Extract ANOVA p-value out of a linear model object
 #'
 #' \code{extract_pval()} returns a sample based on knn scheme
 #' @param modelobject is the model to extract p values from

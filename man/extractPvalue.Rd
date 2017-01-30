@@ -2,7 +2,7 @@
 % Please edit documentation in R/modeling.R
 \name{extractPvalue}
 \alias{extractPvalue}
-\title{Function to extract the overall ANOVA p-value out of a linear model object}
+\title{Extract ANOVA p-value out of a linear model object}
 \usage{
 extractPvalue(modelobject)
 }
