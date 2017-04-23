@@ -2,7 +2,7 @@ Package: hydrosystems
 Type: Package
 Title: Tools for hydrologic and water systems modeling & analysis
 Version: 0.0.1
-Depends: R (>= 3.3.0)
+Depends: R (>= 3.4.0)
 Author: M. Umit Taner
 Maintainer: M. Umit Taner <tanerumit@gmail.com>
 Description: Tools for hydrologic and water systems modeling & analysis
