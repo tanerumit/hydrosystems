@@ -66,15 +66,15 @@ piecewiseLm <- function(var_name, knots) {
 #' @param s is the vector to sample from
 #' @export
 kNearestNeigboors <- function(x, k, s) {
-  
-  x.dis <- sqrt((s - x)^2)
-  s.ind <- which(x.dis %in% sort(x.dis)[1:k])
-  s.wgh <- sapply(1:k, function(y) (1/y)/(sum(1/(1:k))))
-  x.new <- sample(s[s.ind], size = 1, replace = TRUE, prob = s.wgh)
-  x.new.ind <- which(x.new == s)
-  
-  return(x.new.ind)
+ #Distance to data-point
+ x_dist <- sqrt((s - x)^2)
+ #Weights assigned to k-neighbors
+ s_wgt  <- sapply(1:k, function(y) (1/y)/(sum(1/(1:k))))
+ #Sampled value
+ x_new <- sample(order(x_dist)[1:k], size = 1, replace = TRUE, prob = s_wgt)
+ return(x_new)
 }
+
 
 #' Inverse Box-cox transformation
 #'

@@ -6,8 +6,6 @@
 #' @import dplyr
 expandGrid <- function(...) {expand.grid(...)  %>% as_data_frame()}
 
-
-#-------------------------------------------------------------------------------
 #
 #' Create a tibble from the Combinations of data frames
 #'
@@ -17,8 +15,6 @@ expandGrid <- function(...) {expand.grid(...)  %>% as_data_frame()}
 expandGridDf <- function(...) {
   Reduce(function(...) merge(..., by = NULL), list(...)) %>% as_data_frame()
 }
-
-#-------------------------------------------------------------------------------
 
 #' Interpolation from 2-D matrix
 #'
@@ -43,7 +39,7 @@ gridInterpolate <- function(x, y, z = NULL, resolution = 100, ...) {
 
 }
 
-#-------------------------------------------------------------------------------
+
 
 #' Replace multiple elements in a dataframe at once
 #' @param x placeholder
@@ -55,8 +51,6 @@ multiReplace <- function(x, what, by) {
     ind <- match(x, what)
     ifelse(is.na(ind), x, by[ind])
 }
-
-#-------------------------------------------------------------------------------
 
 #' Rename data frame columns in a list of data frames
 #' @param data_list placeholder
@@ -74,7 +68,6 @@ renameColumns <- function(data_list, new_names) {
 
 }
 
-#-------------------------------------------------------------------------------
 #' Find mid-points of equal-length bins
 #' @param x placeholder
 #' @export
@@ -82,6 +75,4 @@ renameColumns <- function(data_list, new_names) {
 binCentered <- function(x) {
     return(x[-length(x)] + (x[2] - x[1])/2)
 }
-
-#-------------------------------------------------------------------------------
 
