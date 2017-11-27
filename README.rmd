@@ -1,10 +1,23 @@
+---
+output: github_document
+---
 
-Hydrosystems
-=========
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+## Hydrosystems
+===============
 
 R functions for hydrological modeling and water resources systems analysis.
 
-Overview
+## Overview
 ===============
 
 Currently version of the package includes functions for:
@@ -16,13 +29,21 @@ Currently version of the package includes functions for:
 + Optimization using Shuffled Complex Evolution algorithm
 + Various helpers for data munging & visualization
 
-Installation
-==============
+## Installation
+===============
+
 install directly from github using the devtools package. First install devtools,
 instructions can be found here: https://github.com/hadley/devtools
 
+```{r, echo = FALSE}
+devtools::install_github('tanerumit/hydrosystems')
 ```
-library(devtools)
 
-install_github('tanerumit/hydrosystems')
+
+## Getting started
+===============
+
+```{r}
+library(hydrosystems)
 ```
+
