@@ -22,7 +22,7 @@
 #' @param  cycle        time-series double cycling [T/F]
 #' @param  C_alloc      allocation coefficient [dimless]
 #' @export
-reservoirSimulation <- function(
+reservoirSim <- function(
   beg.y = 2020, beg.m = 1, K, K_dead, pool_flood = 0, pool_cons  = 0.7,
   pool_buff  = 0.3, buffer = 1, Q, T_dom, T_irr, T_eco, evap.m,
   f_elev, f_vol, f_sarea, S_fr = 0.8, cycle = FALSE,  C_alloc = 0.8,
