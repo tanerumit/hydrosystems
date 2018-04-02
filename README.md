@@ -1,38 +1,28 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-Hydrosystems
-------------
 
-R functions for hydrological modeling and water resources systems
-analysis.
+# R functions for hydrological & water resources systems analysis
 
-Overview
---------
+\*\* currently under development\_\*\*
 
-Currently version of the package includes functions for:
+## Overview
 
--   Financial analysis (Net Present Value)
--   Potential evapotranspiration calculation by Hamon and Hargreaves
+Major functionality in the current version of the package:
+
+  - A conceptual, 4-parameter hydrology model (abcd)
+  - Potential evapotranspiration calculation by Hamon and Hargreaves
     equations
--   Hydrological simulation using abcd and abcde models
--   Rule-based reservoir operations simulation
--   Optimization using Shuffled Complex Evolution algorithm
--   Various helpers for data munging & visualization
+  - K-nearest neighboors sampling algorithm
+  - Model goodness-of-fit measures
+  - Rule-based reservoir simulation
+  - Shuffled Complex Evolution algorithm for optimization
 
-Installation
-------------
+## Installation
 
-install directly from github using the devtools package. First install
-devtools, instructions can be found here:
-<https://github.com/hadley/devtools>
+install directly from github using the devtools package
 
 ``` r
 devtools::install_github('tanerumit/hydrosystems')
-```
 
-Getting started
----------------
-
-``` r
 library(hydrosystems)
 ```
