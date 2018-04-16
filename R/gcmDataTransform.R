@@ -69,22 +69,4 @@ gcmDataTransform <- function(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #gcm_data <- gcmDataTransform(path = "./data/climate projections/")
