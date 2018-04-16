@@ -1,15 +1,11 @@
-
 #' 
 #' Transform raw GCM data to tidy format
-#' 
-#' @description This script is tied to the outputs of the CMIP5 TOOL (Wi, 2017)
 #' @param path path to the GCM projections folder
 #' @param gridInfo name of the grid info file containing gcm information
 #' @param climateVars desired climate variables to be processed
 #' @param scenarios climate scenarios to be included
 #' 
 #' @export
-#' @import dplyr
 gcmDataTransform <- function(
   path = NULL, 
   gridInfo = "cmip5grid.xlsx", 

@@ -11,7 +11,6 @@
 #' @return OUTPUT_DESCRIPTION
 #' @details DETAILS
 #' @export 
-#' @importFrom zoo rollsum
 waspIndex <- function(data = NULL, N = NULL) {
   
   # Required monthly and annual stats for prcpipitation

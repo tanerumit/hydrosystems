@@ -18,5 +18,5 @@ gcmDataTransform(path = NULL, gridInfo = "cmip5grid.xlsx",
 \item{scenarios}{climate scenarios to be included}
 }
 \description{
-This script is tied to the outputs of the CMIP5 TOOL (Wi, 2017)
+Transform raw GCM data to tidy format
 }
