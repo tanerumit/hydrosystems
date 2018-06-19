@@ -1,3 +1,18 @@
+
+
+
+future_climate_rlz <- read_rds("./input/future_climate_rlz.rds")
+climate_vars_output <- c("prcp", "tavg", "tmin", "tmax")
+
+future_climate_rlz_avg <- future_climate_rlz %>% 
+  bind_rows(.id = "var_id") %>%
+  mutate(area = loc_area[as.numeric(id)]) %>%
+  mutate_at(vars(climate_vars_output), funs(tempf(., area))) %>%
+  mutate(id = 1) %>%
+  group_by(var_id, year, month, day) %>%
+  summarize_at(vars(climate_vars_output), funs(sum)) %>%
+  arrange(var_id, year, month, day)
+  
 #-------------------------------------------------------------------------------
 ### 5) EVALUATE MODEL SKILL ----------------------------------------------------
 

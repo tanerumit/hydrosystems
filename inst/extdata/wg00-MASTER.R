@@ -1,33 +1,43 @@
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-###  WEATHER GENERATOR -- MASTER SCRIPT
+#  WEATHER GENERATOR -- MASTER SCRIPT
+#  Date: June 18, 2018
+#  By: Umit Taner
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ### Cran packages
-library(tidyverse); library(magrittr); library(dplyr); library(tidyr);
-library(grid); library(gridExtra); library(lubridate); library(Kendall); 
-library(qqplotr); library(ggridges); library(viridis)
+library(tidyverse); library(magrittr); library(dplyr); 
+library(tidyr); library(grid); library(gridExtra); 
+library(lubridate); library(Kendall); library(qqplotr); 
+library(ggridges); library(viridis)
 
 ### Gitlab packages
 library(hydrosystems); library(ggHydro)
 
-### KEY SETTINGS #############################################
+## GGplot settings
+theme_set(theme_light())
 
-### weather generator scripts directory
-wegen_dir <- "C:/Users/taner/Dropbox/research/scripts/R/wegen"
+# Key settings +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-### Historical climate period
+### weather generator scripts and output plots directories
+wegen_plots_dir  <- "./graphics/test"
+
+### Historical climate data
 date_interval <- "month"
 hist_date_beg <- as.Date("1948/01/1")
 hist_date_end <- as.Date("2008/12/31")
+load("./input/hist_climate_data_ground.Rdata")
+
+#date_interval <- "day"
+#hist_date_beg <- as.Date("2001/01/1")
+#hist_date_end <- as.Date("2015/12/31")
+#load("./input/hist_climate_data_gridded.Rdata")
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Additional date-time tables
 hist_date_seq <- seq.Date(hist_date_beg, hist_date_end, by = date_interval)
 hist_date_mat <- data_frame(year = year(hist_date_seq), 
   month = month(hist_date_seq), day = day(hist_date_seq))
-
-### Read-in tidy-climate data (ground observations)
-load("./input/hist_climate_data_ground.Rdata")
-
-##############################################################
 
 #Subset climate record for the analysis period
 hist_climate <- hist_climate_fullperiod %>% 
@@ -63,58 +73,80 @@ hist_climate_avg_yr <- hist_climate_yr %>%
   group_by(year) %>%
   summarize_at(vars(climate_vars_all), funs(sum))
 
-## GGplot settings
-theme_set(theme_light())
+#Area-averaged precipitation
+ANNUAL_PRCP_org <- as.numeric(hist_climate_avg_yr$prcp)
+ANNUAL_PRCP <- ANNUAL_PRCP_org 
 
 #-------------------------------------------------------------------------------
-##################  STEP 1) Characterize historical climate (optional)
+##################  STEP 1) Characterize historical climate 
 
-### plots directory
-plot_dir  <- "./graphics/climate-ground"
-source(paste0(wegen_dir, "/wg1-characterize-climate.R"))
+# Annual trends
+# Seasonal plot
+# Trend analysis (ManKendall)
+# Spectral analysis
 
+#box-cox transformation 
+#lambda <- as.numeric(car::powerTransform(ANNUAL_PRCP)$lambda)
+#TRANSFORM_DATA <- car::bcPower(ANNUAL_PRCP,lambda)
+#ANNUAL_PRCP <- TRANSFORM_DATA
+
+#Characterize climate files
+source(system.file("extdata", "wg02-characterize-climate.R", package="hydrosystems"))
+
+#### save warm outputs to file 
+#save(POWER_SPECTRUM_PRCP_OBS, period, signif_GWS,
+#  file = "./input/warm_hist_prcp.Rdata")
 
 #-------------------------------------------------------------------------------
 ##################  STEP 2) GENERATE ANNUAL PRECIP USING WAVELET AR MODEL
 
+# Use wavelet AR model to generate new annual precipitation series. 
+
 ### Key parameters
 sim_length  <- 60   # length of each new time-series 
-sim_num     <- 20  # number of new climate time-series
+sim_num     <- 100  # number of new climate time-series
 
-## Wavelet model parameters
+### Wavelet model parameters
 component_num         <-  1 #number of orthogonal series representing low-freq signal
 NUM_PERIODS_COMP1     <-  5 #length of the first component: initial guess
 NUM_PERIODS_ALL_COMPS <- c(NUM_PERIODS_COMP1) #length of all components
 ALL_SIG_PERIODS       <- c(1,2,3,4,5) 
 
-source(paste0(wegen_dir, "/wg2-WARM-simulation.R"))
+source(system.file("extdata", "wg03-WARM-simulation.R", package="hydrosystems"))
 
+### Save results to file
 #save(PRCP_FINAL_ANNUAL_SIM, POWER_SPECTRUM_PRCP_ARIMA_SIM, sim_length, sim_num,
 #     file = "./input/warm_sim_initial.Rdata")
 
 #-------------------------------------------------------------------------------
-##################  STEP 3) SUBSET REALIAZATIONS FROM THE INITIAL WARM ARRAY
+##################  STEP 3) SUBSET FROM INITIAL WARM REALIZATIONS
 
-load("./input/warm_sim_initial.Rdata")
+#load("./input/warm_sim_initial.Rdata")
 
-#Set sub-setting criteria
-corr_bound <- 0.20 # max varaiability in correlation coefficient
-mean_bound <- 0.02 # max variability in mean value
-sdev_bound <- 0.02 # max variability in standard deviation
+### Number of natural variability traces selected
+nvar_num <- 2
 
-source(paste0(wegen_dir, "/wg3-WARM-subsetting.R"))
+### Set sub-setting criteria
+corr_bound <- 1 #0.200 # max varaiability in correlation coefficient
+mean_bound <- 1 #0.015 # max variability in mean value
+sdev_bound <- 1 #0.015 # max variability in standard deviation
+
+source(system.file("extdata", "wg04-WARM-subsetting.R", package="hydrosystems"))
+
+### save to file
+save(stoc_traces_prcp, stoc_traces_power,  sub_clim_sample,
+     file = "./input/warm_results_subsetting.Rdata")
 
 #-------------------------------------------------------------------------------
 ##################  STEP 4) SPATIAL-TEMPORAL DISSAGGREGATION
 
-source(paste0(wegen_dir, "/wg4-WARM-disaggregate.R"))
+### Load from file
+#load("./input/warm_results_subsetting.Rdata")
+
+source(system.file("extdata", "wg05-WARM-disaggregate.R", package="hydrosystems"))
 
 #Save to file
 #write_rds(hist_climate_rlz, path = "./input/hist_climate_rlz.rds", "gz")
-
-#Save final climate series selection 
-save(stoc_traces_prcp, stoc_traces_power,  sub_clim_sample,
-     file = "./input/warm_results_final.Rdata")
 
 #-------------------------------------------------------------------------------
 ##################  STEP 5) CLIMATE CHANGE TRENDS
@@ -132,7 +164,9 @@ delta_tavg_step  <- 1
 delta_prcp_range <- c(0.6,1.4)
 delta_prcp_step  <- 0.1
 
-source(paste0(wegen_dir, "/wg5-climate-trends.R"))
+source(system.file("extdata", "/wg06-climate-trends.R", package="hydrosystems"))
 
 #Write to file
-write_rds(future_clim_rlz, "./input/future_clim_rlz.rds")
+write_rds(future_climate_rlz, "./input/future_climate_rlz.rds")
+
+

@@ -3,9 +3,6 @@
 ## WAVELET AUTOREGRESSIVE MODEL (WARM)
 ## *****************************************************************************
 
-
-source("./R/global.R")
-
 ## Load tidy climate data
 #load("./input/hist_climate_data_ground.Rdata")
 #load("./input/hist_climate_data_gridded.Rdata")
@@ -35,10 +32,6 @@ POWER_SPECTRUM_PRCP_PERIOD <- period
 #   theme(panel.grid.minor = element_blank())
 # 
 # ggsave("./graphics/climate-chr/ground/prcp_annual_spectral_obs.png", height = 6, width = 6)
-
-#### save warm outputs to file 
-save(POWER_SPECTRUM_PRCP_OBS, period, signif_GWS,
-  file = "./input/warm_hist_prcp.Rdata")
 
 # ------------------------------------------------------------------------------
 
@@ -156,10 +149,7 @@ p <- ggWaveletSpectra(period = period, sig = signif_GWS, obs = GWS,
   scale_x_continuous(breaks=seq(5,45,10), limits = c(0, 50), expand=c(0,0)) +
   scale_y_log10() +
   theme(panel.grid.minor = element_blank())
-#ggsave("./graphics/wegen/power_spectra_stochastic.png", height = 6, width = 6)
-
-save(PRCP_FINAL_ANNUAL_SIM, POWER_SPECTRUM_PRCP_ARIMA_SIM, sim_length, sim_num,
-  file = "./input/warm_sim_initial.Rdata")
+ggsave("./graphics/wegen/prcp_annual_spectral_sim_init.png", height = 6, width = 6)
 
 # ------------------------------------------------------------------------------
 

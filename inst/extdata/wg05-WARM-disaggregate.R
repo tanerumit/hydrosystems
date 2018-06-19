@@ -1,6 +1,5 @@
 
-#### DISSAGGREGATION OF CLIMATE DATA
-
+#### DISSAGGREGATION OF CLIMATE DATA +++++++++++++++++++++++++++++++++++++++++++
 
 # Monthly ratios for precipitation 
 mratios <- hist_climate_avg %>%
