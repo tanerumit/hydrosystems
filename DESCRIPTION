@@ -12,10 +12,9 @@ LazyData: true
 RoxygenNote: 6.0.1
 Imports: 
     lazyeval,
-    prim,
-    akima,
     dplyr, 
     ggplot2
 Suggests: 
     tidyr, 
-    lubridate
+    lubridate,
+    akima,
