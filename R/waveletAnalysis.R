@@ -9,7 +9,7 @@
 #' @details place holder
 #' @export 
 
-waveletAnalysis <- function(variable, siglvl=0.85, background_noise = "red") {
+waveletAnalysis <- function(variable, siglvl=0.90, background_noise = "white") {
 
    require(forecast, quietly = FALSE)
 
@@ -91,8 +91,9 @@ waveletAnalysis <- function(variable, siglvl=0.85, background_noise = "red") {
    POWER <- abs(wave)^2
    GWS <- variance1*apply(POWER,FUN=mean,c(1)) #Global Wavelet Spectrum
 
-   #background_noise <- "red"   #can be red or white  ### changed from white!
    
+   ##############Signficance Testing############# 
+
    # get the appropriate parameters [see Table(2)]
    k0 <- 6
    empir <- c(2,0.776,2.32,0.60)

@@ -26,13 +26,6 @@ POWER_SPECTRUM_PRCP_SIGNIFICANCE <- signif_GWS
 #Power spectra periods
 POWER_SPECTRUM_PRCP_PERIOD <- period
 
-# p <- ggWaveletSpectra(period = period, sig = signif_GWS, obs = GWS) +
-#   scale_x_continuous(breaks=seq(5,45,10), limits = c(0, 50), expand=c(0,0)) +
-#   scale_y_log10(labels = comma, breaks = c(1, 10, 20, 50, 100, 250, 500, 1000) * 10^3) +
-#   theme(panel.grid.minor = element_blank())
-# 
-# ggsave("./graphics/climate-chr/ground/prcp_annual_spectral_obs.png", height = 6, width = 6)
-
 # ------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -126,6 +119,8 @@ for (y in 1:sim_num) {
 }
 close(pb)
 
+
+
 ###### Wavelet spectra of simulated ARIMA time-series 
 GWS_length <- length(POWER_SPECTRUM_PRCP_OBS) + 1
 POWER_SPECTRUM_PRCP_ARIMA_SIM <- array(NA,c(length(GWS),sim_num)) 
@@ -149,7 +144,9 @@ p <- ggWaveletSpectra(period = period, sig = signif_GWS, obs = GWS,
   scale_x_continuous(breaks=seq(5,45,10), limits = c(0, 50), expand=c(0,0)) +
   scale_y_log10() +
   theme(panel.grid.minor = element_blank())
-ggsave("./graphics/wegen/prcp_annual_spectral_sim_init.png", height = 6, width = 6)
+
+ggsave(paste0(plotsDir,"/historical-climate/prcp_hist_spectral_sim_init.png"), 
+  height = 5, width = 8)
 
 # ------------------------------------------------------------------------------
 

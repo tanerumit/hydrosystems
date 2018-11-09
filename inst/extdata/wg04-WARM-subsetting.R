@@ -26,19 +26,23 @@ stats_sim <- PRCP_FINAL_ANNUAL_SIM %>% as_tibble() %>%
 sub_nonneg <- which(!sapply(1:sim_num, function(x) any(PRCP_FINAL_ANNUAL_SIM[,x] < 0)))
 
 # Indices of realizations with matching means
-rng_mean <- c(stats_obs$mean*(1 - mean_bound), stats_obs$mean*(1 + mean_bound))
+rng_mean <- c(stats_obs$mean*(1 - mean_lower), stats_obs$mean*(1 + mean_upper))
 sub_mean <- which((stats_sim$mean > rng_mean[1]) & (stats_sim$mean < rng_mean[2]))
 
 # Indices of realizations with matching st. deviation
-rng_sdev <- c(stats_obs$sdev*(1-sdev_bound), stats_obs$sdev*(1+sdev_bound))
+rng_sdev <- c(stats_obs$sdev*(1 - sdev_lower), stats_obs$sdev*(1 + sdev_upper))
 sub_sdev <- which((stats_sim$sdev > rng_sdev[1]) & (stats_sim$sdev < rng_sdev[2]))
 
 # Indices of realizations with matching autocorrelation
-rng_cor1 <- c(stats_obs$cor1*(1-corr_bound), stats_obs$cor1*(1+corr_bound))
+rng_cor1 <- c(stats_obs$cor1*(1 - corr_lower), stats_obs$cor1*(1 + corr_upper))
 sub_cor1 <- which((stats_sim$cor1 > rng_cor1[1]) & (stats_sim$cor1 < rng_cor1[2]))
 
 # Find series matching all criteria
-sub_clim <- Reduce(intersect, list(sub_mean, sub_sdev, sub_nonneg, sub_cor1))
+if (corr_subset == TRUE) {
+  sub_clim <- Reduce(intersect, list(sub_mean, sub_sdev, sub_nonneg, sub_cor1))
+} else {
+  sub_clim <- Reduce(intersect, list(sub_mean, sub_sdev, sub_nonneg))
+}
 
 # Obtain the final stochast realizations 
 if (length(sub_clim) < nvar_num) {
@@ -51,6 +55,7 @@ if (length(sub_clim) < nvar_num) {
 
 stoc_traces_prcp   <- PRCP_FINAL_ANNUAL_SIM[,sub_clim_sample]
 stoc_traces_power  <- POWER_SPECTRUM_PRCP_ARIMA_SIM[, sub_clim_sample]
+############################ DIAGNOSTIC PLOTS ##################################
 
 
 #### Comparison of selected traces to observed precipitation
@@ -60,7 +65,7 @@ p <- ggWaveletSpectra(period=period, sig=signif_GWS, obs=GWS, sim=stoc_traces_po
   scale_x_continuous(breaks=seq(5,45,10), limits = c(0, 50), expand=c(0,0)) +
   scale_y_log10(labels = comma, breaks = c(1, 10, 20, 50, 100, 250, 500, 1000) * 10^3) +
   theme(panel.grid.minor = element_blank())
-ggsave(paste0(wegen_plots_dir,"/prcp_annual_spectral_sim_subset.png"), height = 6, width = 6)
+ggsave(paste0(plotsDir,"climate-traces/prcp_annual_spectral_sim_subset.png"), height = 6, width = 6)
 
 # Descriptive statistics of simulated series
 p1 <- ggplot(mapping = aes(x=mean, y=sdev)) +
@@ -72,8 +77,10 @@ p1 <- ggplot(mapping = aes(x=mean, y=sdev)) +
              color = "black", size = 2, shape = 21, fill = "blue", alpha = 0.8) +
   labs(y = "std. deviation", x = "mean") 
 
+ggsave(paste0(plotsDir,"climate-traces/prcp_annual_sim_stats1.png"), height = 4, width = 4)
+
 p2 <- p1 %+% aes(x = mean, y = cor1) + labs(y = "correlation (lag1)", x = "mean") 
-p <- cowplot::plot_grid(p1, p2, nrow = 1)
-ggsave(paste0(wegen_plots_dir,"/prcp_annual_sim_subset.png"), height = 4, width = 8)
+ggsave(paste0(plotsDir,"climate-traces/prcp_annual_sim_stats2.png"), height = 4, width = 4)
+
 
 # ------------------------------------------------------------------------------ 

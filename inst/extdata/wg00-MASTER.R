@@ -20,7 +20,7 @@ theme_set(theme_light())
 # Key settings +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 ### weather generator scripts and output plots directories
-wegen_plots_dir  <- "./graphics/test"
+wegen_plots_dir  <- "./graphics/climate-princeton"
 
 ### Historical climate data
 date_interval <- "month"
@@ -33,6 +33,9 @@ load("./input/hist_climate_data_ground.Rdata")
 #hist_date_end <- as.Date("2015/12/31")
 #load("./input/hist_climate_data_gridded.Rdata")
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# Number of stations/grid cells
+loc_num <- length(unique(hist_climate_fullperiod$id))
 
 #Additional date-time tables
 hist_date_seq <- seq.Date(hist_date_beg, hist_date_end, by = date_interval)
@@ -73,7 +76,15 @@ hist_climate_avg_yr <- hist_climate_yr %>%
   group_by(year) %>%
   summarize_at(vars(climate_vars_all), funs(sum))
 
-#Area-averaged precipitation
+# Monthly ratios for precipitation 
+prcp_monthly_ratios <- hist_climate_avg %>%
+  group_by(year, month) %>%
+  summarize(prcp = sum(prcp)) %>%
+  group_by(year) %>%
+  mutate(ratio = prcp/sum(prcp)) %>%
+  select(year, month, ratio) %>% spread(month, ratio) 
+
+# Area-averaged precipitation
 ANNUAL_PRCP_org <- as.numeric(hist_climate_avg_yr$prcp)
 ANNUAL_PRCP <- ANNUAL_PRCP_org 
 
@@ -103,8 +114,8 @@ source(system.file("extdata", "wg02-characterize-climate.R", package="hydrosyste
 # Use wavelet AR model to generate new annual precipitation series. 
 
 ### Key parameters
-sim_length  <- 60   # length of each new time-series 
-sim_num     <- 100  # number of new climate time-series
+sim_length  <- 60    # length of each new time-series 
+sim_num     <- 5000  # number of new climate time-series
 
 ### Wavelet model parameters
 component_num         <-  1 #number of orthogonal series representing low-freq signal
@@ -116,7 +127,7 @@ source(system.file("extdata", "wg03-WARM-simulation.R", package="hydrosystems"))
 
 ### Save results to file
 #save(PRCP_FINAL_ANNUAL_SIM, POWER_SPECTRUM_PRCP_ARIMA_SIM, sim_length, sim_num,
-#     file = "./input/warm_sim_initial.Rdata")
+#     file = "./input/wegen/warm_sim_initial.Rdata")
 
 #-------------------------------------------------------------------------------
 ##################  STEP 3) SUBSET FROM INITIAL WARM REALIZATIONS
@@ -124,29 +135,33 @@ source(system.file("extdata", "wg03-WARM-simulation.R", package="hydrosystems"))
 #load("./input/warm_sim_initial.Rdata")
 
 ### Number of natural variability traces selected
-nvar_num <- 2
+nvar_num <- 5
 
 ### Set sub-setting criteria
-corr_bound <- 1 #0.200 # max varaiability in correlation coefficient
-mean_bound <- 1 #0.015 # max variability in mean value
-sdev_bound <- 1 #0.015 # max variability in standard deviation
+corr_bound <- 0.200 # max variability in correlation coefficient
+mean_bound <- 0.015 # max variability in mean value
+sdev_bound <- 0.015 # max variability in standard deviation
 
 source(system.file("extdata", "wg04-WARM-subsetting.R", package="hydrosystems"))
 
 ### save to file
 save(stoc_traces_prcp, stoc_traces_power,  sub_clim_sample,
-     file = "./input/warm_results_subsetting.Rdata")
+     file = "./input/wegen/warm_sim_subsetting.Rdata")
 
 #-------------------------------------------------------------------------------
 ##################  STEP 4) SPATIAL-TEMPORAL DISSAGGREGATION
 
 ### Load from file
-#load("./input/warm_results_subsetting.Rdata")
+#load("./input/warm_sim_subsetting.Rdata")
 
-source(system.file("extdata", "wg05-WARM-disaggregate.R", package="hydrosystems"))
+#source(system.file("extdata", "wg05-WARM-disaggregate.R", package="hydrosystems"))
+
+#(system.file("extdata", "wg05-WARM-disaggregate.R", package="hydrosystems"))
+source("C:/Users/Umit/Dropbox/research/scripts/R/hydrosystems/inst/extdata/wg05-WARM-disaggregate.R")
 
 #Save to file
-#write_rds(hist_climate_rlz, path = "./input/hist_climate_rlz.rds", "gz")
+#write_rds(hist_climate_rlz, path = "./input/wegen/hist_climate_rlz.rds", "gz")
+
 
 #-------------------------------------------------------------------------------
 ##################  STEP 5) CLIMATE CHANGE TRENDS

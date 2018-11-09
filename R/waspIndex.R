@@ -13,17 +13,26 @@
 #' @export 
 waspIndex <- function(data = NULL, N = NULL) {
   
-  # Required monthly and annual stats for prcpipitation
-  mean_mo  <- data %>% group_by(month) %>% summarize(v = mean(prcp)) %>% pull(v)
-  sd_mo    <- data %>% group_by(month) %>% summarize(v = sd(prcp)) %>% pull(v) 
-  mean_ann <- data %>% group_by(year) %>% summarize(v = mean(prcp)) %>% pull(v)
+  require(zoo); require(dplyr)
   
-  # Calculate monthly index values for each gridcell
-  out <- data %>% mutate(
-    Sn = (prcp - mean_mo[month])/sd_mo[month]*(mean_mo[month]/mean_ann[month])) %>%
-    mutate(val = zoo::rollsum(Sn, k = N, align = right, fill = NA)) %>%
+  # Mean and standard deviation of precip in each month
+  month_stats  <- data %>% 
+    group_by(month) %>% 
+    summarize(mean_mo = mean(prcp), sd_mo = sd(prcp))
+  
+  annual_stats <- data %>% 
+    group_by(year) %>% 
+    summarize(mean_yr = mean(prcp))
+  
+  # Calculate monthly index values for each grid cell
+  out <- data %>%
+    left_join(month_stats, by = "month") %>%
+    left_join(annual_stats, by = "year") %>%
+    mutate(m_ratio = ifelse(mean_yr == 0, 0, (mean_mo/mean_yr))) %>%
+    mutate(sn   = (prcp - mean_mo)/sd_mo*(mean_mo/mean_yr)) %>%
+    mutate(val  = rollsum(sn, k = N, align = "right", fill = NA)) %>%
     mutate(wasp = val / sd(val, na.rm = TRUE)) %>%
     select(year, month, prcp, wasp)
-  
+
   return(out)
 }

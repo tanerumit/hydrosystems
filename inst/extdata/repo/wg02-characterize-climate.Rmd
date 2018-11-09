@@ -1,0 +1,69 @@
+---
+  title: "Hydroclimatology"
+author: "M. Umit Taner"
+date: "1/26/2018"
+output: 
+  html_document: 
+    code_folding: none
+    theme: cosmo
+---
+
+```{r setup, include = FALSE} 
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+### Cran packages
+library(tidyverse); library(magrittr); library(dplyr); 
+library(tidyr); library(grid); library(gridExtra); 
+library(lubridate); library(Kendall); library(qqplotr); 
+library(ggridges); library(viridis)
+
+### Gitlab packages
+library(hydrosystems); library(ggHydro)
+
+## GGplot settings
+theme_set(theme_light())
+
+## Load tidy climate data
+load("C:/Users/Umit/Dropbox/research/projects/HPP-batoka/input/climate_data_tidy.Rdata")
+
+### GGplot parameters
+prcp_unit <- "precip (mm)"
+tavg_unit <- expression(paste("Temperature (",degree,"C)"))
+
+### Ggplot dataframes
+gg_hist_climate_yr <- hist_climate_yr %>% ungroup() %>%
+  mutate(id = factor(id, levels = 1:length(unique(.$id)), 
+    labels = loc_label)) 
+
+gg_hist_climate_mon <- hist_climate_mon %>% ungroup() %>%
+  mutate(id = factor(id, levels = 1:length(unique(.$id)), 
+    labels = loc_label)) %>%
+  mutate(month = factor(month, levels = 1:12, labels = month.abb)) 
+
+if(length(loc_label) > 16) {
+  
+  gg_hist_climate_yr  <- filter(gg_hist_climate_yr, id %in% loc_label[1:16])
+  gg_hist_climate_mon <- filter(gg_hist_climate_mon, id %in% loc_label[1:16])
+  
+}
+
+```
+
+
+```{r annual-series, include = FALSE}
+p <- ggplot(gg_hist_climate_yr, aes(x = year)) +
+  geom_line() +
+  facet_wrap(~ id) +
+  geom_smooth(method='lm',formula = y ~ x, fullrange=TRUE) +
+  labs(x = "year")
+
+# Precipitation
+p %+% aes(y = prcp) + labs(y = prcp_unit)
+
+# Temperature 
+p %+% aes(y = tavg) + labs(y = tavg_unit)
+```
+
+
+
+
