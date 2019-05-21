@@ -26,8 +26,7 @@ gcmDataTransform <- function(
   models <- read_excel(paste0(path, gridInfo), "GCM_Lists", col_names = F) %>% pull(1)
   
   #Read-in grid-information for each model
-  grid <- lapply(models, function(x) read_excel(paste0(path, gridInfo), x)) %>%
-    setNames(models)
+  grid <- lapply(models, function(x) read_excel(paste0(path, gridInfo), x)) %>% setNames(models)
   
   #Loop through scenarios & gcms
   for (k in 1:length(scenarios)) {
